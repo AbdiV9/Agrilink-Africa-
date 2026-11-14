@@ -1,0 +1,21 @@
+# Render Blueprint: in Render choose New > Blueprint and point it at this repo.
+# Then set AT_API_KEY (and AT_USERNAME once you leave the sandbox) in the dashboard.
+services:
+  - type: web
+    name: agrilink-server
+    runtime: python
+    plan: free
+    buildCommand: pip install -r server/requirements.txt
+    startCommand: uvicorn server.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SERVER_API_TOKEN
+        generateValue: true
+      - key: AT_USERNAME
+        value: sandbox
+      - key: AT_API_KEY
+        sync: false
+      - key: AT_SENDER_ID
+        sync: false
