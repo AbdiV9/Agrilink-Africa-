@@ -1,0 +1,11 @@
+# Owner: Person 3 (Integration, Logic & API Lead)
+# Server-only dependencies (no Flet), used by Render: pip install -r server/requirements.txt
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2
+bcrypt>=4.0
+python-dotenv>=1.0
+requests>=2.31
+numpy>=1.26
+scikit-learn>=1.4
+africastalking>=1.2
