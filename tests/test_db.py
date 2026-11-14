@@ -1,4 +1,4 @@
-
+# Owner: Person 1 (Backend & Database Lead)
 """Database layer tests. Run with:  pytest tests/test_db.py -v"""
 
 from __future__ import annotations
@@ -413,3 +413,16 @@ def test_prediction_with_little_history(empty_db):
                      (cid, date.today().isoformat()))
     assert Prediction.predict_price(cid) == []
     assert "Not enough price history" in Prediction.get_season_advice(cid, 1)
+
+
+def test_second_review_replaces_first(seeded_db):
+    """One review per reviewer and seller, so repeat reviews can't inflate a rating."""
+    buyer = UQ.get_user_by_username("funmi_ade")["id"]
+    seller = UQ.get_user_by_username("grace_n")["id"]
+    first = UQ.add_review(buyer, seller, 5, "Great")
+    count = UQ.get_seller_profile(seller)["review_count"]
+    second = UQ.add_review(buyer, seller, 2, "Changed my mind")
+    profile = UQ.get_seller_profile(seller)
+    assert first == second and profile["review_count"] == count
+    mine = [r for r in profile["reviews"] if r.get("comment") in ("Great", "Changed my mind")]
+    assert len(mine) == 1 and mine[0]["rating"] == 2

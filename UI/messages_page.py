@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Messages: inbox (/messages) and a conversation thread (/messages/<user_id>)
 with a send box and a "send as SMS" toggle."""
 
@@ -56,7 +57,7 @@ def _inbox(page: ft.Page, uid: int) -> ft.View:
             padding=12, border_radius=RADIUS, bgcolor=pal.card, ink=True,
             on_click=lambda e, oid=cv["other_id"]: page.go(f"/messages/{oid}"),
             content=ft.Row([
-                ft.CircleAvatar(content=ft.Text(_initials(name)), bgcolor=PRIMARY, color="white", radius=22),
+                ft.CircleAvatar(content=ft.Text(_initials(name), size=fs(15)), bgcolor=PRIMARY, color="white", radius=fs(22)),
                 ft.Column([
                     ft.Row(title, spacing=4),
                     ft.Text(preview, size=fs(13), color=pal.text if unread else pal.muted, max_lines=1,
@@ -94,8 +95,8 @@ def _bubble(page: ft.Page, msg: dict[str, Any], mine: bool) -> ft.Row:
         content=ft.Column([
             ft.Text(msg.get("body", ""), size=fs(14), color="white" if mine else pal.text, selectable=True),
             ft.Row([
-                *([ft.Icon(ft.Icons.SMS_OUTLINED, size=fs(12), color="#E8F5E9" if mine else pal.muted)] if via == "sms" else []),
-                ft.Text(meta, size=fs(10), color="#E8F5E9" if mine else pal.muted),
+                *([ft.Icon(ft.Icons.SMS_OUTLINED, size=fs(12), color="#FFFFFF" if mine else pal.muted)] if via == "sms" else []),
+                ft.Text(meta, size=fs(10), color="#FFFFFF" if mine else pal.muted),
             ], spacing=3, tight=True, alignment=ft.MainAxisAlignment.END),
         ], spacing=2, tight=True, horizontal_alignment=ft.CrossAxisAlignment.END),
     )

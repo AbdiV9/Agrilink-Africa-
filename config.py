@@ -1,3 +1,4 @@
+# Owner: Person 3 (Integration, Logic & API Lead)
 """Central configuration. Secrets are read ONLY here, from .env / environment.
 
 Other modules do ``import config`` and read e.g. ``config.ANTHROPIC_API_KEY``.

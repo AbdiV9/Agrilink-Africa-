@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Colours, light/dark themes and app-wide text scaling.
 
 * ``apply_theme(page, dark, text_scale)`` sets both themes and the mode.
@@ -18,9 +19,9 @@ PRIMARY_DARK = "#1B5E20"
 PRIMARY_LIGHT = "#A5D6A7"
 ACCENT = "#F9A825"         # harvest gold
 UP = "#2E7D32"             # price up (Trading 212 style)
-DOWN = "#C62828"           # price down
-UP_DARK_MODE = "#66BB6A"   # brighter greens/reds read better on dark backgrounds
-DOWN_DARK_MODE = "#EF5350"
+DOWN = "#B71C1C"           # price down
+UP_DARK_MODE = "#81C784"   # brighter greens/reds read better on dark backgrounds
+DOWN_DARK_MODE = "#FF8A80"
 WHITE = "#FFFFFF"
 
 RADIUS = 14
@@ -42,17 +43,21 @@ class Palette:
     down: str
     chip_up_bg: str
     chip_down_bg: str
+    info: str          # blue for rain / verified / links
+    on_primary_muted: str  # secondary text on the green hero cards
 
 
+# Text colours are dark/opaque enough for WCAG AA contrast (4.5:1 or more)
+# on both bg and card, including the "muted" secondary text.
 LIGHT = Palette(
-    bg="#F5F7F4", card="#FFFFFF", card_alt="#EEF3EC", border="#DDE5DA",
-    text="#1B1F1C", muted="#5F6B62", up=UP, down=DOWN,
-    chip_up_bg="#E3F2E4", chip_down_bg="#FCE4E4",
+    bg="#F2F5F1", card="#FFFFFF", card_alt="#E4ECE1", border="#B3C2AF",
+    text="#0E130F", muted="#36423A", up=UP, down=DOWN,
+    chip_up_bg="#D6EDD8", chip_down_bg="#F9D6D6", info="#0D47A1", on_primary_muted="#FFFFFF",
 )
 DARK = Palette(
-    bg="#0F1411", card="#18201B", card_alt="#202A23", border="#2C3830",
-    text="#E8EEE9", muted="#9AA89E", up=UP_DARK_MODE, down=DOWN_DARK_MODE,
-    chip_up_bg="#1E3A24", chip_down_bg="#3E1F1F",
+    bg="#0E1310", card="#19221C", card_alt="#233027", border="#4A5B4F",
+    text="#F4F8F5", muted="#CAD6CD", up=UP_DARK_MODE, down=DOWN_DARK_MODE,
+    chip_up_bg="#1F4527", chip_down_bg="#4A2222", info="#90CAF9", on_primary_muted="#FFFFFF",
 )
 
 # Module state set by apply_theme(); read by fs() and palette().

@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Reusable widgets for every AgriLink page.
 
 Main pieces (from the spec): nav_bar, crop_card, price_chart, price_header,
@@ -116,8 +117,84 @@ def nav_bar(page: ft.Page, selected: str = "/home", unread: int = 0) -> ft.Navig
         destinations=destinations,
         indicator_color=ft.Colors.with_opacity(0.18, PRIMARY),
         on_change=lambda e: page.go(NAV_TABS[e.control.selected_index][0]),
-        height=68,
+        height=fs(68),
     )
+
+
+def confirm_logout(page: ft.Page) -> None:
+    """Ask "Log out?" and, if confirmed, clear the session and go to /login."""
+    pal = palette(page)
+
+    def do_logout(e: ft.ControlEvent) -> None:
+        page.close(dlg)
+        from Auth.auth import logout  # imported here so UI previews work without Auth
+
+        logout()
+        theme.apply_theme(page, dark=False, text_scale=1.0)
+        page.go("/login")
+
+    dlg = ft.AlertDialog(
+        modal=True,
+        title=ft.Text(tr("settings.logout_q", "Log out?")),
+        content=ft.Text(tr("settings.logout_body", "You'll need your password to log back in.")),
+        actions=[ft.TextButton(tr("common.cancel", "Cancel"), on_click=lambda e: page.close(dlg)),
+                 ft.FilledButton(tr("settings.logout", "Log out"), on_click=do_logout,
+                                 style=ft.ButtonStyle(bgcolor=pal.down, color="white"))],
+    )
+    page.open(dlg)
+
+
+def logout_button(page: ft.Page) -> ft.IconButton:
+    """App-bar logout icon (shown on every main tab)."""
+    return ft.IconButton(ft.Icons.LOGOUT, icon_color=theme.WHITE, icon_size=fs(24),
+                         tooltip=tr("settings.logout", "Log out"), on_click=lambda e: confirm_logout(page))
+
+
+_INPUT_TYPES = (ft.TextField, ft.Dropdown)
+_CHILD_ATTRS = ("controls", "content", "tabs", "actions", "leading", "title", "subtitle", "trailing")
+
+
+def style_inputs(root: Any, page: ft.Page | None = None) -> None:
+    """Give every TextField/Dropdown under ``root`` clear, high-contrast colours.
+
+    Flet 0.28 has no input theme, so main.py calls this on each built view.
+    Only attributes a page didn't set itself are changed.
+    """
+    pal = palette(page)
+    accent = PRIMARY if not theme.is_dark(page) else pal.up
+    wanted = {
+        "color": pal.text, "border_color": pal.border, "focused_border_color": accent, "cursor_color": accent,
+        "filled": True, "fill_color": pal.card, "bgcolor": pal.card,
+        "label_style": ft.TextStyle(color=pal.muted, size=fs(14), weight=ft.FontWeight.W_500),
+        "helper_style": ft.TextStyle(color=pal.muted, size=fs(12)),
+        "hint_style": ft.TextStyle(color=pal.muted, size=fs(14)),
+        "focused_border_width": 2, "border_width": 1.5,
+    }
+    seen: set[int] = set()
+
+    def walk(ctl: Any) -> None:
+        if ctl is None or id(ctl) in seen:
+            return
+        seen.add(id(ctl))
+        if isinstance(ctl, _INPUT_TYPES):
+            for name, value in wanted.items():
+                try:
+                    if getattr(ctl, name, None) is None:
+                        setattr(ctl, name, value)
+                except Exception:  # attribute not supported by this control/version
+                    pass
+            if isinstance(ctl, ft.TextField) and ctl.text_size is None:
+                ctl.text_size = fs(15)
+        for attr in _CHILD_ATTRS:
+            try:
+                child = getattr(ctl, attr, None)
+            except Exception:
+                continue
+            for item in child if isinstance(child, list) else [child]:
+                if isinstance(item, (ft.Control, ft.Tab)):
+                    walk(item)
+
+    walk(root)
 
 
 def app_view(
@@ -139,6 +216,8 @@ def app_view(
     pages (they get a back arrow automatically when a view is underneath).
     """
     pal = palette(page)
+    if nav:  # main tabs always offer a way to log out
+        actions = (actions or []) + [logout_button(page)]
     body = ft.Container(
         content=ft.Column(list(controls), spacing=14, tight=False,
                           scroll=ft.ScrollMode.AUTO if scroll else None, expand=True),
@@ -193,14 +272,16 @@ def change_chip(change_pct: float | None, page: ft.Page | None = None, size: flo
 
 
 def verified_badge(size: float = 16, label: bool = False) -> ft.Control:
-    icon = ft.Icon(ft.Icons.VERIFIED, color="#1E88E5", size=fs(size), tooltip="Verified farmer")
+    """Blue tick (✔) for verified farmers, optionally with 'Verified' text."""
+    icon = ft.Icon(ft.Icons.VERIFIED, color=palette().info, size=fs(size), tooltip="Verified farmer")
     if not label:
         return icon
-    return ft.Row([icon, ft.Text("Verified", size=fs(size - 3), color="#1E88E5", weight=ft.FontWeight.W_600)],
+    return ft.Row([icon, ft.Text("Verified", size=fs(size - 3), color=palette().info, weight=ft.FontWeight.W_600)],
                   spacing=3, tight=True)
 
 
 def star_rating(rating: float | None, count: int | None = None, size: float = 16) -> ft.Row:
+    """★★★★½ (12)"""
     value = rating or 0.0
     stars: list[ft.Control] = []
     for i in range(1, 6):
@@ -291,10 +372,11 @@ def crop_card(
         on_click=(lambda e: on_click(listing)) if on_click else None,
         content=ft.Column([
             ft.Stack([
-                crop_image(listing.get("image_url"), listing.get("crop_name"), height=118),
+                crop_image(listing.get("image_url"), listing.get("crop_name"), height=fs(118)),
                 ft.Container(heart, right=4, top=4),
             ]),
-            ft.Text(listing.get("crop_name", ""), size=fs(15), weight=ft.FontWeight.W_700, max_lines=1),
+            ft.Text(listing.get("crop_name", ""), size=fs(15), weight=ft.FontWeight.W_700, max_lines=1,
+                    overflow=ft.TextOverflow.ELLIPSIS),
             ft.Text(f"{format_money(listing.get('price_per_unit'), listing.get('currency', 'KES'))}/{unit}",
                     size=fs(14), weight=ft.FontWeight.W_600, color=PRIMARY if not theme.is_dark() else pal.up),
             ft.Text(f"{listing.get('quantity', 0):g} {unit} available", size=fs(12), color=pal.muted),
@@ -480,8 +562,8 @@ class PriceChart(ft.Column):
             interactive=True,
             tooltip_bgcolor=ft.Colors.with_opacity(0.92, pal.card_alt),
             horizontal_grid_lines=ft.ChartGridLines(color=ft.Colors.with_opacity(0.4, pal.border), width=1),
-            left_axis=ft.ChartAxis(labels_size=46, show_labels=True),
-            bottom_axis=ft.ChartAxis(labels=bottom_labels, labels_size=24),
+            left_axis=ft.ChartAxis(labels_size=fs(46), show_labels=True),
+            bottom_axis=ft.ChartAxis(labels=bottom_labels, labels_size=fs(24)),
             border=ft.Border(bottom=ft.BorderSide(1, pal.border)),
             expand=True,
         )
@@ -656,16 +738,16 @@ def weather_icon(code: int | None) -> tuple[str, str]:
     if c in (1, 2):
         return ft.Icons.WB_CLOUDY, ACCENT
     if c == 3:
-        return ft.Icons.CLOUD, "#90A4AE"
+        return ft.Icons.CLOUD, palette().muted
     if c in (45, 48):
-        return ft.Icons.FOGGY, "#90A4AE"
+        return ft.Icons.FOGGY, palette().muted
     if 51 <= c <= 67 or 80 <= c <= 82:
-        return ft.Icons.WATER_DROP, "#1E88E5"
+        return ft.Icons.WATER_DROP, palette().info
     if 71 <= c <= 77 or c in (85, 86):
-        return ft.Icons.AC_UNIT, "#4FC3F7"
+        return ft.Icons.AC_UNIT, palette().info
     if c >= 95:
-        return ft.Icons.THUNDERSTORM, "#5C6BC0"
-    return ft.Icons.CLOUD, "#90A4AE"
+        return ft.Icons.THUNDERSTORM, "#3949AB" if not theme.is_dark() else "#9FA8DA"
+    return ft.Icons.CLOUD, palette().muted
 
 
 def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -> ft.Container:
@@ -694,7 +776,7 @@ def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -
         except (ValueError, KeyError):
             label = "—"
         return ft.Container(
-            width=62,
+            width=fs(62),
             padding=ft.padding.symmetric(vertical=8),
             border_radius=12,
             bgcolor=pal.card_alt,
@@ -702,7 +784,7 @@ def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -
                 ft.Text(label, size=fs(12), color=pal.muted),
                 ft.Icon(ic, color=col, size=fs(22)),
                 ft.Text(f"{d.get('t_max', 0):.0f}°", size=fs(13), weight=ft.FontWeight.W_600),
-                ft.Text(f"{d.get('rain_mm', 0):.0f}mm", size=fs(11), color="#1E88E5"),
+                ft.Text(f"{d.get('rain_mm', 0):.0f}mm", size=fs(11), color=palette().info),
             ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER, tight=True),
         )
 
@@ -720,7 +802,7 @@ def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -
                     ft.Text(f"{today.get('condition', '')} · {forecast.get('region', '')}", size=fs(13), color=pal.muted),
                 ], spacing=0, expand=True),
                 ft.Column([
-                    ft.Row([ft.Icon(ft.Icons.WATER_DROP, size=fs(14), color="#1E88E5"),
+                    ft.Row([ft.Icon(ft.Icons.WATER_DROP, size=fs(14), color=palette().info),
                             ft.Text(f"{today.get('rain_chance', 0):.0f}%", size=fs(13))], spacing=2, tight=True),
                     ft.Text(f"{today.get('rain_mm', 0):.1f} mm", size=fs(12), color=pal.muted),
                 ], spacing=0, horizontal_alignment=ft.CrossAxisAlignment.END),
@@ -737,10 +819,13 @@ def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -
 ALERT_STYLES: dict[str, tuple[str, str]] = {
     "price": (ft.Icons.NOTIFICATIONS_ACTIVE, ACCENT),
     "harvest": (ft.Icons.AGRICULTURE, PRIMARY),
-    "season": (ft.Icons.CALENDAR_MONTH, "#6D4C41"),
-    "weather": (ft.Icons.THUNDERSTORM, "#1E88E5"),
-    "info": (ft.Icons.INFO_OUTLINE, "#546E7A"),
+    "season": (ft.Icons.CALENDAR_MONTH, "#4E342E"),
+    "weather": (ft.Icons.THUNDERSTORM, "#0D47A1"),
+    "info": (ft.Icons.INFO_OUTLINE, "#37474F"),
 }
+# Lighter versions of the same colours so icons stay clear on dark cards.
+ALERT_COLORS_DARK = {"price": ACCENT, "harvest": "#81C784", "season": "#BCAAA4", "weather": "#90CAF9",
+                     "info": "#B0BEC5"}
 
 
 def alert_tile(title: str, subtitle: str = "", kind: str = "info",
@@ -748,6 +833,8 @@ def alert_tile(title: str, subtitle: str = "", kind: str = "info",
     """A coloured alert row (price, harvest, season, weather or info)."""
     pal = palette()
     icon, color = ALERT_STYLES.get(kind, ALERT_STYLES["info"])
+    if theme.is_dark():
+        color = ALERT_COLORS_DARK.get(kind, ALERT_COLORS_DARK["info"])
     trailing = ft.IconButton(ft.Icons.CLOSE, icon_size=fs(18), on_click=on_dismiss, tooltip="Dismiss") \
         if on_dismiss else None
     return ft.Container(
@@ -760,7 +847,7 @@ def alert_tile(title: str, subtitle: str = "", kind: str = "info",
         content=ft.Row([
             ft.Icon(icon, color=color, size=fs(24)),
             ft.Column([
-                ft.Text(title, size=fs(14), weight=ft.FontWeight.W_600),
+                ft.Text(title, size=fs(14), weight=ft.FontWeight.W_600, color=pal.text),
                 *([ft.Text(subtitle, size=fs(12), color=pal.muted)] if subtitle else []),
             ], spacing=2, expand=True),
             *([trailing] if trailing else []),
@@ -774,7 +861,7 @@ def loading_spinner(message: str = "Loading…") -> ft.Container:
         alignment=ft.alignment.center,
         padding=30,
         content=ft.Column([
-            ft.ProgressRing(color=PRIMARY, width=36, height=36),
+            ft.ProgressRing(color=PRIMARY, width=fs(36), height=fs(36)),
             ft.Text(message, size=fs(13), color=palette().muted),
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, tight=True, spacing=12),
     )

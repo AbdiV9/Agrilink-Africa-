@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Listing detail (/listing/<id>): photo, details, seller card, quantity
 picker, Buy and Message seller."""
 
@@ -53,8 +54,8 @@ def _seller_card(page: ft.Page, listing: dict[str, Any]) -> ft.Container:
         padding=14, border_radius=RADIUS, bgcolor=pal.card, border=ft.border.all(1, pal.border), ink=True,
         on_click=lambda e: page.go(f"/profile/{listing['seller_id']}"),
         content=ft.Row([
-            ft.CircleAvatar(content=ft.Text(initials, weight=ft.FontWeight.W_700), bgcolor=PRIMARY, color="white",
-                            radius=24),
+            ft.CircleAvatar(content=ft.Text(initials, size=fs(16), weight=ft.FontWeight.W_700), bgcolor=PRIMARY, color="white",
+                            radius=fs(24)),
             ft.Column([
                 ft.Row(title_row, spacing=4),
                 ft.Text(f"@{listing.get('seller_username', '')} · {listing.get('seller_region') or ''}",
@@ -107,7 +108,7 @@ def build_listing_view(page: ft.Page, listing_id: int, **params: Any) -> ft.View
     # --- quantity picker + total ---------------------------------------------
     step = _step_for(available)
     start_qty = min(available, step * 10) if available else 0
-    qty_field = ft.TextField(value=f"{start_qty:g}", width=110, text_align=ft.TextAlign.CENTER,
+    qty_field = ft.TextField(value=f"{start_qty:g}", width=fs(110), text_align=ft.TextAlign.CENTER,
                              keyboard_type=ft.KeyboardType.NUMBER, suffix_text=unit, dense=True,
                              disabled=not active or own)
     total = ft.Text("", size=fs(16), weight=ft.FontWeight.W_700)
@@ -210,11 +211,11 @@ def build_listing_view(page: ft.Page, listing_id: int, **params: Any) -> ft.View
 
     buy_label = (tr("listing.your_listing", "This is your listing") if own else
                  tr("listing.buy_now", "Buy now") if active else tr("listing.sold", "Sold out"))
-    buy_btn = ft.FilledButton(buy_label, icon=ft.Icons.SHOPPING_CART, height=48, expand=True,
+    buy_btn = ft.FilledButton(buy_label, icon=ft.Icons.SHOPPING_CART, height=fs(48), expand=True,
                               disabled=own or not active, on_click=confirm_buy,
                               style=ft.ButtonStyle(bgcolor=PRIMARY, color="white"))
     msg_btn = ft.OutlinedButton(tr("listing.message", "Message seller"), icon=ft.Icons.CHAT_BUBBLE_OUTLINE,
-                                height=48, expand=True, disabled=own, on_click=message_seller)
+                                height=fs(48), expand=True, disabled=own, on_click=message_seller)
 
     status_chip: list[ft.Control] = []
     if not active:

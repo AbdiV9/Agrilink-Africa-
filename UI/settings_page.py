@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Settings (/settings): language, edit details, text size, dark mode,
 help / user manual, about and logout."""
 
@@ -188,21 +189,7 @@ def build_settings_view(page: ft.Page, **params: Any) -> ft.View:
     feature_text = " · ".join(f"{'✅' if on else '⚪'} {name.replace('_', ' ')}" for name, on in features.items())
 
     def confirm_logout(e: ft.ControlEvent) -> None:
-        def do_logout(ev: ft.ControlEvent) -> None:
-            page.close(dlg)
-            logout()
-            theme.apply_theme(page, dark=False, text_scale=1.0)
-            page.go("/login")
-
-        dlg = ft.AlertDialog(
-            modal=True,
-            title=ft.Text(tr("settings.logout_q", "Log out?")),
-            content=ft.Text(tr("settings.logout_body", "You'll need your password to log back in.")),
-            actions=[ft.TextButton(tr("common.cancel", "Cancel"), on_click=lambda ev: page.close(dlg)),
-                     ft.FilledButton(tr("settings.logout", "Log out"), on_click=do_logout,
-                                     style=ft.ButtonStyle(bgcolor=pal.down, color="white"))],
-        )
-        page.open(dlg)
+        c.confirm_logout(page)
 
     try:
         unread = md.call("get_unread_count", uid)
@@ -233,7 +220,7 @@ def build_settings_view(page: ft.Page, **params: Any) -> ft.View:
             ft.Text(f"{config.APP_NAME} v{config.APP_VERSION}", size=fs(14), weight=ft.FontWeight.W_600),
             ft.Text(feature_text, size=fs(12), color=pal.muted),
         ]),
-        ft.OutlinedButton(tr("settings.logout", "Log out"), icon=ft.Icons.LOGOUT, height=48, on_click=confirm_logout,
+        ft.OutlinedButton(tr("settings.logout", "Log out"), icon=ft.Icons.LOGOUT, height=fs(48), on_click=confirm_logout,
                           style=ft.ButtonStyle(color=pal.down, side=ft.BorderSide(1, pal.down))),
         ft.Container(height=8),
     ])

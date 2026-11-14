@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Purchase history (/purchases, STRETCH).
 
 Tabs: "Bought" (``get_purchase_history``) and "Sold" (``get_sales_history``,
@@ -46,7 +47,7 @@ def _month(iso: str) -> str:
 def _summary_card(page: ft.Page, summary: dict[str, Any], selling: bool) -> ft.Container:
     def stat(label: str, value: str) -> ft.Column:
         return ft.Column([ft.Text(value, size=fs(18), weight=ft.FontWeight.W_700, color="white"),
-                          ft.Text(label, size=fs(12), color="#E8F5E9")], spacing=2, tight=True)
+                          ft.Text(label, size=fs(12), color="#FFFFFF")], spacing=2, tight=True)
 
     return ft.Container(
         padding=16, border_radius=RADIUS + 4,
@@ -148,7 +149,7 @@ def build_purchases_view(page: ft.Page, **params: Any) -> ft.View:
 
         controls.append(ft.Tabs(
             selected_index=[s[0] for s in sections].index(current["key"]), on_change=on_change,
-            tabs=[ft.Tab(text=label) for _, label, *_ in sections], height=48,
+            tabs=[ft.Tab(text=label) for _, label, *_ in sections], height=fs(48),
             indicator_color=PRIMARY, label_color=PRIMARY))
     controls += [body, ft.Container(height=8)]
     return c.app_view(page, "/purchases", tr("purchases.title", "Purchase history"), controls=controls)

@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Crop price page (/crop/<id>): Trading 212-style header and chart, AI
 prediction toggle, season advice, price alert, watchlist and sellers."""
 

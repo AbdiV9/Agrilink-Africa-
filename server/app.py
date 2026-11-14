@@ -1,5 +1,6 @@
 # Owner: Person 3 (Integration, Logic & API Lead)
-"""
+"""AgriLink server (STRETCH): a small FastAPI app to host on Render.com.
+
 What it does:
 * **SMS gateway.** ``POST /api/sms/send`` sends SMS through Africa's Talking,
   so the AT key lives only on the server. The desktop app uses it when

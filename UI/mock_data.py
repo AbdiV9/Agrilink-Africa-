@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Mock data so the UI can be built and previewed without the backend.
 
 Pages never import Databases/Auth query functions directly. They call::

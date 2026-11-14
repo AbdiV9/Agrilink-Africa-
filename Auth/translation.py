@@ -34,6 +34,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "news.all": "Zote", "news.loading": "Inapakia habari…", "purchases.title": "Historia ya ununuzi",
         "purchases.bought": "Nilivyonunua", "purchases.sold": "Nilivyouza", "purchases.spent": "Matumizi",
         "purchases.earned": "Mapato", "purchases.orders": "Oda",
+        "login.show_password": "Onyesha nenosiri",
         "nav.home": "Nyumbani", "nav.market": "Soko", "nav.sell": "Uza", "nav.messages": "Ujumbe",
         "nav.settings": "Mipangilio",
         # common
@@ -100,6 +101,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "news.all": "Dhammaan", "news.loading": "Wararka waa la soo rarayaa…", "purchases.title": "Taariikhda iibsiga",
         "purchases.bought": "Waan iibsaday", "purchases.sold": "Waan iibiyay", "purchases.spent": "Kharash",
         "purchases.earned": "Dakhli", "purchases.orders": "Dalabaad",
+        "login.show_password": "Muuji erayga sirta",
         "nav.home": "Hoyga", "nav.market": "Suuqa", "nav.sell": "Iibi", "nav.messages": "Fariimaha",
         "nav.settings": "Dejinta",
         "common.cancel": "Jooji", "common.refresh": "Cusboonaysii",

@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Depop-style profile (/profile/<id>): avatar, name, location, stars, verified
 badge, crops planted, listings grid, reviews and a "Get verified" form."""
 
@@ -119,7 +120,7 @@ def _verification_card(page: ft.Page, uid: int, verified: bool, route: str) -> f
     return ft.Container(
         padding=14, border_radius=RADIUS, bgcolor=pal.card, border=ft.border.all(1, pal.border),
         content=ft.Column([
-            ft.Row([ft.Icon(ft.Icons.VERIFIED_OUTLINED, color="#1E88E5"),
+            ft.Row([ft.Icon(ft.Icons.VERIFIED_OUTLINED, color=palette(page).info),
                     ft.Text(tr("profile.get_verified", "Get verified"), size=fs(16), weight=ft.FontWeight.W_700)]),
             ft.Text(tr("profile.verify_why", "Verified farmers get a ✔ badge and sell up to 2× faster. "
                                              "Submit one of these documents:"), size=fs(13), color=pal.muted),
@@ -176,7 +177,7 @@ def build_profile_view(page: ft.Page, user_id: int, **params: Any) -> ft.View:
         content=ft.Column([
             ft.Row([
                 ft.CircleAvatar(content=ft.Text(initials, size=fs(26), weight=ft.FontWeight.W_700),
-                                bgcolor=PRIMARY, color="white", radius=40),
+                                bgcolor=PRIMARY, color="white", radius=fs(40)),
                 ft.Column([
                     ft.Row(name_row, spacing=6, wrap=True),
                     ft.Text(f"@{profile['username']}", size=fs(13), color=pal.muted),

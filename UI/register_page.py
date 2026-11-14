@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Registration screen (/register) with inline validation from Auth.validation."""
 
 from __future__ import annotations
@@ -49,6 +50,14 @@ def build_register_view(page: ft.Page, **params: object) -> ft.View:
         segments=[ft.Segment(value=v, label=ft.Text(label, size=fs(13))) for v, label in ROLE_OPTIONS],
         selected={"farmer"}, show_selected_icon=False, allow_empty_selection=False,
     )
+    def toggle_show(e: ft.ControlEvent) -> None:
+        for f in (password, confirm):  # dots when unticked, plain text when ticked
+            f.password = not show_password.value
+        page.update()
+
+    show_password = ft.Checkbox(label=tr("login.show_password", "Show password"), value=False,
+                                on_change=toggle_show, active_color=PRIMARY,
+                                label_style=ft.TextStyle(size=fs(14), color=pal.text))
     role_error = ft.Text("", color=pal.down, size=fs(12), visible=False)
     form_error = ft.Text("", color=pal.down, size=fs(13), visible=False)
 
@@ -133,13 +142,13 @@ def build_register_view(page: ft.Page, **params: object) -> ft.View:
         page.update()
 
     create_btn = ft.FilledButton(
-        tr("register.button", "Create account"), on_click=submit, height=50,
+        tr("register.button", "Create account"), on_click=submit, height=fs(50),
         style=ft.ButtonStyle(bgcolor=PRIMARY, color=theme.WHITE, shape=ft.RoundedRectangleBorder(radius=12)),
     )
     region.on_submit = submit
 
     card = ft.Container(
-        width=520,
+        col={"xs": 12, "sm": 10, "md": 8, "lg": 6, "xl": 5},  # full width on phones, capped on desktop
         padding=20,
         bgcolor=pal.card,
         border_radius=RADIUS + 6,
@@ -151,7 +160,7 @@ def build_register_view(page: ft.Page, **params: object) -> ft.View:
             ft.Text(tr("register.i_am", "I am a…"), size=fs(14), weight=ft.FontWeight.W_600),
             role, role_error,
             username, full_name, email, phone,
-            password, confirm,
+            password, confirm, show_password,
             ft.Row([country]), region,
             form_error,
             create_btn,
@@ -170,5 +179,5 @@ def build_register_view(page: ft.Page, **params: object) -> ft.View:
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         appbar=ft.AppBar(title=ft.Text(tr("register.appbar", "Create account"), color=theme.WHITE),
                          bgcolor=PRIMARY, color=theme.WHITE),
-        controls=[card],
+        controls=[ft.ResponsiveRow([card], alignment=ft.MainAxisAlignment.CENTER)],
     )

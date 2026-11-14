@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """AI assistant (/chatbot): chat bubbles, preset prompt buttons, typing indicator."""
 
 from __future__ import annotations

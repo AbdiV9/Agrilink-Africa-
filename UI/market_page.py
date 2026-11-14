@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Market (/market): a "Listings" tab (search, filters, card grid) and a
 "Markets" tab (Trading 212-style price list with sparklines)."""
 
@@ -114,7 +115,7 @@ def _markets_tab(page: ft.Page, crops: list[dict[str, Any]]) -> ft.Control:
                 ft.Column([
                     ft.Text(c.format_money(r["price"]), size=fs(14), weight=ft.FontWeight.W_600),
                     c.change_chip(r["change_pct"], page, size=11),
-                ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.END, width=112),
+                ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.END, width=fs(112)),
             ], spacing=10),
         )
 

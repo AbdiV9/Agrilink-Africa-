@@ -185,7 +185,11 @@ def get_seller_profile(user_id: int) -> dict[str, Any] | None:
 
 
 def add_review(reviewer_id: int, seller_id: int, rating: int, comment: str = "") -> int:
-    """Add a 1-5 star review and return its id."""
+    """Add a 1-5 star review and return its id.
+
+    One review per reviewer and seller: reviewing the same seller again
+    replaces the earlier rating and comment, so ratings can't be inflated.
+    """
     try:
         rating_int = int(rating)
     except (TypeError, ValueError):
@@ -199,6 +203,16 @@ def add_review(reviewer_id: int, seller_id: int, rating: int, comment: str = "")
             raise ValueError("Reviewer does not exist.")
         if not _user_exists(conn, seller_id):
             raise ValueError("Seller does not exist.")
+        existing = conn.execute(
+            "SELECT id FROM reviews WHERE reviewer_id = ? AND seller_id = ? ORDER BY id LIMIT 1",
+            (reviewer_id, seller_id),
+        ).fetchone()
+        if existing:
+            conn.execute(
+                "UPDATE reviews SET rating = ?, comment = ?, created_at = CURRENT_TIMESTAMP WHERE id = ?",
+                (rating_int, (comment or "").strip(), existing["id"]),
+            )
+            return int(existing["id"])
         cur = conn.execute(
             "INSERT INTO reviews (reviewer_id, seller_id, rating, comment) VALUES (?, ?, ?, ?)",
             (reviewer_id, seller_id, rating_int, (comment or "").strip()),

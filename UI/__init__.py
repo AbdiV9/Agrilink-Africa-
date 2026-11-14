@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """AgriLink Africa user interface (Flet).
 
 * ``theme``: colours, light/dark themes, ``fs()`` text scaling

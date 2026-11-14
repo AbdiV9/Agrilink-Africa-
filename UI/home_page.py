@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Home dashboard (/home): greeting, alerts, watchlist with sparklines, weather."""
 
 from __future__ import annotations
@@ -116,7 +117,7 @@ def build_home_view(page: ft.Page, **params: Any) -> ft.View:
         content=ft.Column([
             ft.Text(f"{_greeting()}, {first_name} 👋", size=fs(22), weight=ft.FontWeight.W_700, color="white"),
             ft.Text(f"{user.get('region') or ''}{', ' if user.get('region') else ''}{user.get('country') or ''}"
-                    f" · {datetime.now():%A %d %B}", size=fs(13), color="#E8F5E9"),
+                    f" · {datetime.now():%A %d %B}", size=fs(13), color="#FFFFFF"),
             ft.Row([
                 ft.FilledButton(tr("home.ask_ai", "Ask AgriLink AI"), icon=ft.Icons.AUTO_AWESOME,
                                 style=ft.ButtonStyle(bgcolor=ACCENT, color="#1B1F1C"),

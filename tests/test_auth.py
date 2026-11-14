@@ -1,4 +1,4 @@
-
+# Owner: Person 3 (Integration, Logic & API Lead)
 """Auth, session and service tests. Run with:  pytest tests/test_auth.py -v
 
 No test touches the internet or a paid API: weather falls back to sample

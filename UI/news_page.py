@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Farming news (/news, STRETCH): headlines from ``Auth.news.get_news``,
 filterable by crop. Tapping a story opens it in the browser."""
 

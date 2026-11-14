@@ -1,5 +1,5 @@
 <!-- Owner: Person 3 (Integration, Logic & API Lead) -->
-# AgriLink Africa 
+# AgriLink Africa 🌾
 
 AgriLink Africa is a crop marketplace for African farmers and buyers, built in Python with Flet. It combines:
 
@@ -16,7 +16,7 @@ It runs as a desktop window (phone-shaped by default) or in a browser. Every ext
 
 ## 1. Setup
 
-You need **Python 3.11 or newer**.
+You need **Python 3.11, 3.12 or 3.13** (3.12 is recommended). Very new versions such as 3.14 or 3.15 can fail to install some packages (for example pyyaml) because ready-made Windows builds don't exist for them yet. On Windows, check with `py --list`, and create the venv with `py -3.12 -m venv .venv`.
 
 ```bash
 cd agrilink
@@ -104,7 +104,7 @@ python -m Databases.Prediction     # MAE on the last 30 days for every crop
 ## 3. Test
 
 ```bash
-pytest -v          # 111 tests, about 30 s, no internet needed
+pytest -v          # 112 tests, about 30 s, no internet needed
 pytest tests/test_db.py      # database and prediction (Person 1)
 pytest tests/test_auth.py    # validation, login lockout, services, chatbot (Person 3)
 pytest tests/test_stretch.py # server, email, news, purchase history (Person 3)
@@ -112,6 +112,15 @@ pytest tests/test_stretch.py # server, email, news, purchase history (Person 3)
 
 The tests use a temporary database (via `AGRILINK_DB_PATH`), so your real `agrilink.db` is never touched. All AI, SMS, DeepL and weather calls are switched off or faked.
 
+## 4. Who owns what
+
+Every file starts with `# Owner: Person X (Role)`. Change another person's file only after telling them.
+
+| Person | Role | Owns |
+|---|---|---|
+| **P1 (Farrell)** | Backend & Database | `Databases/`: `db.py`, `Database_Setup.py`, `User_Queries.py`, `Market_Queries.py`, `Message_Queries.py`, `Alert_Queries.py`, `Prediction.py`, plus `tests/test_db.py`, `tests/conftest.py` |
+| **P2** | Frontend (Flet) | `UI/`: `theme.py`, `components.py`, `mock_data.py`, `preview.py`, all `*_page.py` files (including `news_page.py`, `purchases_page.py`), `assets/` |
+| **P3** | Integration, Logic & API | `main.py`, `config.py`, `requirements.txt`, `.env.example`, `README.md`, `Auth/`: `validation.py`, `session.py`, `auth.py`, `communication.py`, `weather.py`, `translation.py`, `notifications.py`, `chatbot.py`, `email_service.py`, `news.py`, plus `server/` (`app.py`, `requirements.txt`), `render.yaml`, `tests/test_auth.py`, `tests/test_stretch.py` |
 
 ### How the pieces connect
 
@@ -139,7 +148,7 @@ Run through this on each person's machine before the demo.
 
 **Setup**
 - [ ] `pip install -r requirements.txt` succeeds on Python 3.11+ (Windows and macOS)
-- [ ] `pytest` shows 111 passed
+- [ ] `pytest` shows 112 passed
 - [ ] Deleting `agrilink.db` and running `python main.py` re-creates and seeds it
 
 **Auth**
@@ -183,6 +192,8 @@ Run through this on each person's machine before the demo.
 * **Crop images** fall back to emoji unless you add pictures to `UI/assets/crops/` (see the README there).
 * **Login lockout** is held in memory, so restarting the app clears it.
 * **Flet version.** It's pinned below 0.29. Moving to Flet 1.x would need changes in `main.py` and the pages (`page.open`, `ft.app`).
+
+More help: [docs/FAQ.md](docs/FAQ.md) answers beginner questions, and [docs/TESTING.md](docs/TESTING.md) lists what to test for a good user experience.
 
 ## 7. Stretch goals (built)
 

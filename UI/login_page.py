@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Login screen (/login)."""
 
 from __future__ import annotations
@@ -24,12 +25,19 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
         label=tr("login.password", "Password"), password=True, can_reveal_password=True,
         prefix_icon=ft.Icons.LOCK_OUTLINE, autofocus=bool(prefill), text_size=fs(15), border_radius=12,
     )
-    error = ft.Text("", color=pal.down, size=fs(13), visible=False)
+    def toggle_show(e: ft.ControlEvent) -> None:
+        password.password = not show_password.value  # dots when unticked, plain text when ticked
+        password.update()
+
+    show_password = ft.Checkbox(label=tr("login.show_password", "Show password"), value=False,
+                                on_change=toggle_show, active_color=PRIMARY,
+                                label_style=ft.TextStyle(size=fs(14), color=pal.text))
+    error = ft.Text("", color=pal.down, size=fs(13), weight=ft.FontWeight.W_600, visible=False)
     spinner = ft.ProgressRing(width=20, height=20, stroke_width=2, color=theme.WHITE, visible=False)
     button_label = ft.Text(tr("login.button", "Log in"), size=fs(16), weight=ft.FontWeight.W_600)
     button = ft.FilledButton(
         content=ft.Row([spinner, button_label], alignment=ft.MainAxisAlignment.CENTER, tight=True, spacing=10),
-        height=50,
+        height=fs(50),
         style=ft.ButtonStyle(bgcolor=PRIMARY, color=theme.WHITE, shape=ft.RoundedRectangleBorder(radius=12)),
     )
 
@@ -64,7 +72,7 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
     username.on_submit = lambda e: password.focus()
 
     card = ft.Container(
-        width=420,
+        col={"xs": 12, "sm": 9, "md": 6, "lg": 5, "xl": 4},  # full width on phones, capped on desktop
         padding=24,
         bgcolor=pal.card,
         border_radius=RADIUS + 6,
@@ -75,6 +83,7 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
             ft.Container(height=4),
             username,
             password,
+            show_password,
             error,
             button,
             ft.Row([
@@ -93,8 +102,8 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
         padding=ft.padding.only(top=40, bottom=24),
         content=ft.Column([
             ft.Container(
-                width=76, height=76, border_radius=38, bgcolor=PRIMARY, alignment=ft.alignment.center,
-                content=ft.Icon(ft.Icons.ECO, color=ACCENT, size=44),
+                width=fs(76), height=fs(76), border_radius=fs(38), bgcolor=PRIMARY, alignment=ft.alignment.center,
+                content=ft.Icon(ft.Icons.ECO, color=ACCENT, size=fs(44)),
             ),
             ft.Text("AgriLink Africa", size=fs(28), weight=ft.FontWeight.W_800, color=PRIMARY if not theme.is_dark(page) else pal.up),
             ft.Text(tr("login.tagline", "Fair prices, from farm to market."), size=fs(14), color=pal.muted),
@@ -107,5 +116,5 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
         padding=PAD,
         scroll=ft.ScrollMode.AUTO,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        controls=[hero, card],
+        controls=[hero, ft.ResponsiveRow([card], alignment=ft.MainAxisAlignment.CENTER)],
     )

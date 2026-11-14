@@ -1,3 +1,4 @@
+# Owner: Person 3 (Integration, Logic & API Lead)
 """Tests for the STRETCH features: server, email, news, purchase history.
 
 Run with:  pytest tests/test_stretch.py -v   (no internet, SMTP or SMS needed)

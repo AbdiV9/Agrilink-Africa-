@@ -1,3 +1,4 @@
+# Owner: Person 2 (Frontend Flet UI Lead)
 """Create a listing (/sell) with a live "today's market price" hint."""
 
 from __future__ import annotations
@@ -155,7 +156,7 @@ def build_sell_view(page: ft.Page, **params: Any) -> ft.View:
             description,
             estimate,
             form_error,
-            ft.FilledButton(tr("sell.publish", "Publish listing"), icon=ft.Icons.PUBLISH, height=50, on_click=submit,
+            ft.FilledButton(tr("sell.publish", "Publish listing"), icon=ft.Icons.PUBLISH, height=fs(50), on_click=submit,
                             style=ft.ButtonStyle(bgcolor=PRIMARY, color="white",
                                                  shape=ft.RoundedRectangleBorder(radius=12))),
         ], spacing=12),
