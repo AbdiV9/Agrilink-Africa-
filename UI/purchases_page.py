@@ -70,10 +70,10 @@ def _order_row(page: ft.Page, r: dict[str, Any], selling: bool) -> ft.Container:
         padding=12, border_radius=RADIUS, bgcolor=pal.card, border=ft.border.all(1, pal.border), ink=True,
         on_click=lambda e, lid=r["listing_id"]: page.go(f"/listing/{lid}"),
         content=ft.Row([
-            ft.Text(theme.crop_emoji(r.get("crop_name")), size=fs(26)),
+            ft.Text(theme.crop_emoji(r.get("crop_name")), size=fs(26), color=palette().text),
             ft.Column([
                 ft.Text(f"{r.get('crop_name')} · {float(r.get('quantity') or 0):g}{unit}", size=fs(15),
-                        weight=ft.FontWeight.W_600),
+                        weight=ft.FontWeight.W_600, color=palette().text),
                 ft.Text(f"{tr('purchases.to', 'to') if selling else tr('purchases.from', 'from')} {who} · "
                         f"{c.short_date(str(r.get('created_at')))}", size=fs(12), color=pal.muted),
             ], spacing=2, expand=True, tight=True),

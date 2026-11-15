@@ -105,15 +105,15 @@ def _markets_tab(page: ft.Page, crops: list[dict[str, Any]]) -> ft.Control:
             bgcolor=pal.card, border_radius=RADIUS, ink=True,
             on_click=lambda e: page.go(f"/crop/{r['id']}"),
             content=ft.Row([
-                ft.Container(ft.Text(crop_emoji(r["name"]), size=fs(22)), width=42, height=42,
+                ft.Container(ft.Text(crop_emoji(r["name"]), size=fs(22), color=palette().text), width=42, height=42,
                              bgcolor=pal.card_alt, border_radius=21, alignment=ft.alignment.center),
                 ft.Column([
-                    ft.Text(r["name"], size=fs(15), weight=ft.FontWeight.W_600),
+                    ft.Text(r["name"], size=fs(15), weight=ft.FontWeight.W_600, color=palette().text),
                     ft.Text(f"{r.get('category') or ''} · {r.get('unit', 'kg')}", size=fs(12), color=pal.muted),
                 ], spacing=0, expand=True),
                 c.sparkline(r["spark"], width=84, height=34),
                 ft.Column([
-                    ft.Text(c.format_money(r["price"]), size=fs(14), weight=ft.FontWeight.W_600),
+                    ft.Text(c.format_money(r["price"]), size=fs(14), weight=ft.FontWeight.W_600, color=palette().text),
                     c.change_chip(r["change_pct"], page, size=11),
                 ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.END, width=fs(112)),
             ], spacing=10),
@@ -138,7 +138,7 @@ def _markets_tab(page: ft.Page, crops: list[dict[str, Any]]) -> ft.Control:
         render()
 
     selector = ft.SegmentedButton(
-        segments=[ft.Segment(value=k, label=ft.Text(tr(f"market.sort_{k}", label), size=fs(12)))
+        segments=[ft.Segment(value=k, label=ft.Text(tr(f"market.sort_{k}", label), size=fs(12), color=palette().text))
                   for k, label in MARKET_SORTS],
         selected={sort_state["value"]}, show_selected_icon=False, on_change=sort_changed,
     )

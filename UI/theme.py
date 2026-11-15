@@ -92,8 +92,12 @@ def trend_color(change_pct: float | None, page: ft.Page | None = None) -> str:
     return pal.down if (change_pct or 0) < 0 else pal.up
 
 
-def _text_theme(scale: float) -> ft.TextTheme:
-    """Material text styles scaled by ``scale`` (affects text without explicit sizes)."""
+def _text_theme(scale: float, color: str) -> ft.TextTheme:
+    """Material text styles scaled by ``scale``, all in the theme's text colour.
+
+    The colour is set explicitly because on some Windows setups Flet otherwise
+    drew bold text in white on light backgrounds.
+    """
     sizes = {
         "display_large": 57, "display_medium": 45, "display_small": 36,
         "headline_large": 32, "headline_medium": 28, "headline_small": 24,
@@ -101,7 +105,7 @@ def _text_theme(scale: float) -> ft.TextTheme:
         "body_large": 16, "body_medium": 14, "body_small": 12,
         "label_large": 14, "label_medium": 12, "label_small": 11,
     }
-    return ft.TextTheme(**{name: ft.TextStyle(size=round(px * scale, 1)) for name, px in sizes.items()})
+    return ft.TextTheme(**{name: ft.TextStyle(size=round(px * scale, 1), color=color) for name, px in sizes.items()})
 
 
 def _build_theme(dark: bool, scale: float) -> ft.Theme:
@@ -120,7 +124,7 @@ def _build_theme(dark: bool, scale: float) -> ft.Theme:
             outline=pal.border,
             error=pal.down,
         ),
-        text_theme=_text_theme(scale),
+        text_theme=_text_theme(scale, pal.text),
         scaffold_bgcolor=pal.bg,
         card_color=pal.card,
         divider_color=pal.border,

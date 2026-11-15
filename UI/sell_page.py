@@ -45,7 +45,7 @@ def build_sell_view(page: ft.Page, **params: Any) -> ft.View:
                                hint_text=tr("sell.description_hint", "Quality, variety, drying, delivery options…"))
     market_hint = ft.Text("", size=fs(13), color=pal.muted)
     use_market = ft.TextButton(tr("sell.use_market", "Use market price"), visible=False)
-    estimate = ft.Text("", size=fs(14), weight=ft.FontWeight.W_600)
+    estimate = ft.Text("", size=fs(14), weight=ft.FontWeight.W_600, color=palette().text)
     form_error = ft.Text("", color=pal.down, size=fs(13), visible=False)
     market_price: dict[str, float | None] = {"value": None}
 

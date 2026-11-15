@@ -121,6 +121,25 @@ def nav_bar(page: ft.Page, selected: str = "/home", unread: int = 0) -> ft.Navig
     )
 
 
+def markdown_style(size: float = 14) -> ft.MarkdownStyleSheet:
+    """Markdown styles with every text type in the theme colour (bold, lists, headings, tables)."""
+    pal = palette()
+    body = ft.TextStyle(size=fs(size), color=pal.text)
+    strong = ft.TextStyle(size=fs(size), color=pal.text, weight=ft.FontWeight.W_700)
+    return ft.MarkdownStyleSheet(
+        p_text_style=body, strong_text_style=strong, em_text_style=ft.TextStyle(size=fs(size), color=pal.text,
+                                                                                 italic=True),
+        list_bullet_text_style=body, blockquote_text_style=ft.TextStyle(size=fs(size), color=pal.muted),
+        h1_text_style=ft.TextStyle(size=fs(size + 6), color=pal.text, weight=ft.FontWeight.W_700),
+        h2_text_style=ft.TextStyle(size=fs(size + 4), color=pal.text, weight=ft.FontWeight.W_700),
+        h3_text_style=ft.TextStyle(size=fs(size + 2), color=pal.text, weight=ft.FontWeight.W_700),
+        h4_text_style=strong, h5_text_style=strong, h6_text_style=strong,
+        table_head_text_style=strong, table_body_text_style=body,
+        code_text_style=ft.TextStyle(size=fs(size - 1), color=pal.text, font_family="monospace"),
+        a_text_style=ft.TextStyle(size=fs(size), color=pal.info),
+    )
+
+
 def confirm_logout(page: ft.Page) -> None:
     """Ask "Log out?" and, if confirmed, clear the session and go to /login."""
     pal = palette(page)
@@ -135,8 +154,8 @@ def confirm_logout(page: ft.Page) -> None:
 
     dlg = ft.AlertDialog(
         modal=True,
-        title=ft.Text(tr("settings.logout_q", "Log out?")),
-        content=ft.Text(tr("settings.logout_body", "You'll need your password to log back in.")),
+        title=ft.Text(tr("settings.logout_q", "Log out?"), color=palette().text),
+        content=ft.Text(tr("settings.logout_body", "You'll need your password to log back in."), color=palette().text),
         actions=[ft.TextButton(tr("common.cancel", "Cancel"), on_click=lambda e: page.close(dlg)),
                  ft.FilledButton(tr("settings.logout", "Log out"), on_click=do_logout,
                                  style=ft.ButtonStyle(bgcolor=pal.down, color="white"))],
@@ -150,7 +169,7 @@ def logout_button(page: ft.Page) -> ft.IconButton:
                          tooltip=tr("settings.logout", "Log out"), on_click=lambda e: confirm_logout(page))
 
 
-_INPUT_TYPES = (ft.TextField, ft.Dropdown)
+_INPUT_TYPES = (ft.TextField, ft.Dropdown)  # Switch and Checkbox labels are styled too
 _CHILD_ATTRS = ("controls", "content", "tabs", "actions", "leading", "title", "subtitle", "trailing")
 
 
@@ -185,6 +204,17 @@ def style_inputs(root: Any, page: ft.Page | None = None) -> None:
                     pass
             if isinstance(ctl, ft.TextField) and ctl.text_size is None:
                 ctl.text_size = fs(15)
+            if isinstance(ctl, ft.Dropdown):
+                try:
+                    if getattr(ctl, "text_style", None) is None:
+                        ctl.text_style = ft.TextStyle(color=pal.text, size=fs(15))
+                except Exception:
+                    pass
+        elif isinstance(ctl, (ft.Switch, ft.Checkbox)) and getattr(ctl, "label_style", None) is None:
+            try:  # switch / checkbox labels in the theme colour
+                ctl.label_style = ft.TextStyle(color=pal.text, size=fs(14))
+            except Exception:
+                pass
         for attr in _CHILD_ATTRS:
             try:
                 child = getattr(ctl, attr, None)
@@ -246,7 +276,7 @@ def app_view(
 
 def section_title(text: str, action_text: str | None = None, on_action: Handler = None) -> ft.Row:
     """Bold section heading with an optional 'See all' style link on the right."""
-    controls: list[ft.Control] = [ft.Text(text, size=fs(18), weight=ft.FontWeight.W_700, expand=True)]
+    controls: list[ft.Control] = [ft.Text(text, size=fs(18), weight=ft.FontWeight.W_700, expand=True, color=palette().text)]
     if action_text:
         controls.append(ft.TextButton(action_text, on_click=on_action))
     return ft.Row(controls, vertical_alignment=ft.CrossAxisAlignment.CENTER)
@@ -304,7 +334,7 @@ def crop_image(image_url: str | None, crop_name: str | None, height: float = 120
                radius: float = RADIUS) -> ft.Control:
     """Crop photo from UI/assets, falling back to a big emoji on a tinted tile."""
     fallback = ft.Container(
-        content=ft.Text(crop_emoji(crop_name), size=height * 0.42),
+        content=ft.Text(crop_emoji(crop_name), size=height * 0.42, color=palette().text),
         alignment=ft.alignment.center,
         bgcolor=palette().card_alt,
         height=height,
@@ -376,7 +406,7 @@ def crop_card(
                 ft.Container(heart, right=4, top=4),
             ]),
             ft.Text(listing.get("crop_name", ""), size=fs(15), weight=ft.FontWeight.W_700, max_lines=1,
-                    overflow=ft.TextOverflow.ELLIPSIS),
+                    overflow=ft.TextOverflow.ELLIPSIS, color=palette().text),
             ft.Text(f"{format_money(listing.get('price_per_unit'), listing.get('currency', 'KES'))}/{unit}",
                     size=fs(14), weight=ft.FontWeight.W_600, color=PRIMARY if not theme.is_dark() else pal.up),
             ft.Text(f"{listing.get('quantity', 0):g} {unit} available", size=fs(12), color=pal.muted),
@@ -428,10 +458,10 @@ def price_header(
     """Trading 212-style header: crop name, BIG price, % chip and '1 week' note."""
     pal = palette(page)
     return ft.Column([
-        ft.Row([ft.Text(crop_emoji(crop_name), size=fs(26)),
-                ft.Text(crop_name, size=fs(20), weight=ft.FontWeight.W_700)], spacing=8),
+        ft.Row([ft.Text(crop_emoji(crop_name), size=fs(26), color=palette().text),
+                ft.Text(crop_name, size=fs(20), weight=ft.FontWeight.W_700, color=palette().text)], spacing=8),
         ft.Row([
-            ft.Text(format_money(price, currency), size=fs(34), weight=ft.FontWeight.W_800),
+            ft.Text(format_money(price, currency), size=fs(34), weight=ft.FontWeight.W_800, color=palette().text),
             ft.Text(f"/{unit}", size=fs(16), color=pal.muted),
         ], spacing=4, vertical_alignment=ft.CrossAxisAlignment.END, wrap=True),
         ft.Row([change_chip(change_pct, page), ft.Text("past week", size=fs(13), color=pal.muted)], spacing=8),
@@ -468,7 +498,7 @@ class PriceChart(ft.Column):
         self.on_range_change = on_range_change
         self.chart_height = height
         self.selector = ft.SegmentedButton(
-            segments=[ft.Segment(value=k, label=ft.Text(k, size=fs(13))) for k in CHART_RANGES],
+            segments=[ft.Segment(value=k, label=ft.Text(k, size=fs(13), color=palette().text)) for k in CHART_RANGES],
             selected={self.range},
             show_selected_icon=False,
             on_change=self._range_changed,
@@ -643,7 +673,7 @@ class SearchBarWithFilters(ft.Row):
             content=ft.Container(
                 padding=ft.padding.only(left=PAD, right=PAD, bottom=PAD),
                 content=ft.Column([
-                    ft.Text("Filters", size=fs(18), weight=ft.FontWeight.W_700),
+                    ft.Text("Filters", size=fs(18), weight=ft.FontWeight.W_700, color=palette().text),
                     self.crop_dd,
                     ft.Row([self.min_field, self.max_field], spacing=10),
                     self.location_field,
@@ -783,7 +813,7 @@ def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -
             content=ft.Column([
                 ft.Text(label, size=fs(12), color=pal.muted),
                 ft.Icon(ic, color=col, size=fs(22)),
-                ft.Text(f"{d.get('t_max', 0):.0f}°", size=fs(13), weight=ft.FontWeight.W_600),
+                ft.Text(f"{d.get('t_max', 0):.0f}°", size=fs(13), weight=ft.FontWeight.W_600, color=palette().text),
                 ft.Text(f"{d.get('rain_mm', 0):.0f}mm", size=fs(11), color=palette().info),
             ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER, tight=True),
         )
@@ -798,12 +828,12 @@ def weather_card(forecast: dict[str, Any] | None, page: ft.Page | None = None) -
                 ft.Icon(icon, color=icon_color, size=fs(44)),
                 ft.Column([
                     ft.Text(f"{today.get('t_max', 0):.0f}° / {today.get('t_min', 0):.0f}°",
-                            size=fs(24), weight=ft.FontWeight.W_700),
+                            size=fs(24), weight=ft.FontWeight.W_700, color=palette().text),
                     ft.Text(f"{today.get('condition', '')} · {forecast.get('region', '')}", size=fs(13), color=pal.muted),
                 ], spacing=0, expand=True),
                 ft.Column([
                     ft.Row([ft.Icon(ft.Icons.WATER_DROP, size=fs(14), color=palette().info),
-                            ft.Text(f"{today.get('rain_chance', 0):.0f}%", size=fs(13))], spacing=2, tight=True),
+                            ft.Text(f"{today.get('rain_chance', 0):.0f}%", size=fs(13), color=palette().text)], spacing=2, tight=True),
                     ft.Text(f"{today.get('rain_mm', 0):.1f} mm", size=fs(12), color=pal.muted),
                 ], spacing=0, horizontal_alignment=ft.CrossAxisAlignment.END),
             ], spacing=12),
@@ -891,7 +921,7 @@ def empty_state(icon: str = ft.Icons.INBOX, title: str = "Nothing here yet", mes
         padding=ft.padding.symmetric(vertical=36, horizontal=PAD),
         content=ft.Column([
             ft.Icon(icon, size=fs(56), color=pal.muted),
-            ft.Text(title, size=fs(17), weight=ft.FontWeight.W_600, text_align=ft.TextAlign.CENTER),
+            ft.Text(title, size=fs(17), weight=ft.FontWeight.W_600, text_align=ft.TextAlign.CENTER, color=palette().text),
             *([ft.Text(message, size=fs(13), color=pal.muted, text_align=ft.TextAlign.CENTER)] if message else []),
             *([ft.FilledButton(action_text, on_click=on_action)] if action_text else []),
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=8, tight=True),

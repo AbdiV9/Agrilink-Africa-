@@ -34,7 +34,7 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
                                 label_style=ft.TextStyle(size=fs(14), color=pal.text))
     error = ft.Text("", color=pal.down, size=fs(13), weight=ft.FontWeight.W_600, visible=False)
     spinner = ft.ProgressRing(width=20, height=20, stroke_width=2, color=theme.WHITE, visible=False)
-    button_label = ft.Text(tr("login.button", "Log in"), size=fs(16), weight=ft.FontWeight.W_600)
+    button_label = ft.Text(tr("login.button", "Log in"), size=fs(16), weight=ft.FontWeight.W_600, color=theme.WHITE)
     button = ft.FilledButton(
         content=ft.Row([spinner, button_label], alignment=ft.MainAxisAlignment.CENTER, tight=True, spacing=10),
         height=fs(50),
@@ -78,7 +78,7 @@ def build_login_view(page: ft.Page, **params: object) -> ft.View:
         border_radius=RADIUS + 6,
         border=ft.border.all(1, pal.border),
         content=ft.Column([
-            ft.Text(tr("login.title", "Welcome back"), size=fs(22), weight=ft.FontWeight.W_700),
+            ft.Text(tr("login.title", "Welcome back"), size=fs(22), weight=ft.FontWeight.W_700, color=palette().text),
             ft.Text(tr("login.subtitle", "Log in to buy, sell and track crop prices."), size=fs(13), color=pal.muted),
             ft.Container(height=4),
             username,

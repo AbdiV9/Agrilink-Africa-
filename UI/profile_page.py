@@ -61,7 +61,7 @@ def _review_dialog(page: ft.Page, uid: int, seller: dict[str, Any], route: str) 
         page.go(route)
 
     paint()
-    dlg.title = ft.Text(tr("profile.review_title", "Review {name}", name=seller.get("full_name") or seller["username"]))
+    dlg.title = ft.Text(tr("profile.review_title", "Review {name}", name=seller.get("full_name") or seller["username"]), color=palette().text)
     dlg.content = ft.Column([stars, comment, error], tight=True, width=340, spacing=10)
     dlg.actions = [ft.TextButton(tr("common.cancel", "Cancel"), on_click=lambda e: page.close(dlg)),
                    ft.FilledButton(tr("profile.post_review", "Post review"), on_click=save)]
@@ -79,7 +79,7 @@ def _verification_card(page: ft.Page, uid: int, verified: bool, route: str) -> f
     history = [
         ft.Row([
             ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, size=fs(16), color=pal.muted),
-            ft.Text(f"{labels.get(s['doc_type'], s['doc_type'])} · {s['doc_reference']}", size=fs(12), expand=True),
+            ft.Text(f"{labels.get(s['doc_type'], s['doc_type'])} · {s['doc_reference']}", size=fs(12), expand=True, color=palette().text),
             ft.Container(ft.Text(s["status"].upper(), size=fs(10), color="white", weight=ft.FontWeight.W_700),
                          bgcolor=STATUS_COLORS.get(s["status"], pal.muted), border_radius=6,
                          padding=ft.padding.symmetric(2, 6)),
@@ -91,7 +91,7 @@ def _verification_card(page: ft.Page, uid: int, verified: bool, route: str) -> f
             padding=14, border_radius=RADIUS, bgcolor=pal.chip_up_bg,
             content=ft.Column([
                 ft.Row([c.verified_badge(22), ft.Text(tr("profile.is_verified", "You're a verified farmer"),
-                                                       size=fs(15), weight=ft.FontWeight.W_700)]),
+                                                       size=fs(15), weight=ft.FontWeight.W_700, color=palette().text)]),
                 ft.Text(tr("profile.verified_sub", "Buyers see a ✔ next to your name on every listing."),
                         size=fs(12), color=pal.muted),
                 *history,
@@ -121,7 +121,7 @@ def _verification_card(page: ft.Page, uid: int, verified: bool, route: str) -> f
         padding=14, border_radius=RADIUS, bgcolor=pal.card, border=ft.border.all(1, pal.border),
         content=ft.Column([
             ft.Row([ft.Icon(ft.Icons.VERIFIED_OUTLINED, color=palette(page).info),
-                    ft.Text(tr("profile.get_verified", "Get verified"), size=fs(16), weight=ft.FontWeight.W_700)]),
+                    ft.Text(tr("profile.get_verified", "Get verified"), size=fs(16), weight=ft.FontWeight.W_700, color=palette().text)]),
             ft.Text(tr("profile.verify_why", "Verified farmers get a ✔ badge and sell up to 2× faster. "
                                              "Submit one of these documents:"), size=fs(13), color=pal.muted),
             ft.Row([doc_dd]),
@@ -149,14 +149,14 @@ def build_profile_view(page: ft.Page, user_id: int, **params: Any) -> ft.View:
     reviews = profile.get("reviews", [])
 
     # --- header ----------------------------------------------------------------
-    name_row: list[ft.Control] = [ft.Text(name, size=fs(22), weight=ft.FontWeight.W_800)]
+    name_row: list[ft.Control] = [ft.Text(name, size=fs(22), weight=ft.FontWeight.W_800, color=palette().text)]
     if profile.get("verified"):
         name_row.append(c.verified_badge(22))
     role_label = {"farmer": "🌾 Farmer", "buyer": "🛒 Buyer", "both": "🔁 Farmer & buyer"}.get(profile.get("role"), "")
     member_since = c.short_date(profile.get("created_at", "")) + " " + (profile.get("created_at") or "")[:4]
 
     def stat(value: str, label: str) -> ft.Column:
-        return ft.Column([ft.Text(value, size=fs(18), weight=ft.FontWeight.W_800),
+        return ft.Column([ft.Text(value, size=fs(18), weight=ft.FontWeight.W_800, color=palette().text),
                           ft.Text(label, size=fs(12), color=pal.muted)],
                          spacing=0, horizontal_alignment=ft.CrossAxisAlignment.CENTER, expand=True)
 
@@ -188,7 +188,7 @@ def build_profile_view(page: ft.Page, user_id: int, **params: Any) -> ft.View:
                 ], spacing=3, expand=True),
             ], spacing=14, vertical_alignment=ft.CrossAxisAlignment.START),
             ft.Row([
-                ft.Container(ft.Text(role_label, size=fs(12)), bgcolor=pal.card_alt, border_radius=12,
+                ft.Container(ft.Text(role_label, size=fs(12), color=palette().text), bgcolor=pal.card_alt, border_radius=12,
                              padding=ft.padding.symmetric(4, 10)),
                 ft.Text(tr("profile.member_since", "Member since {d}", d=member_since.strip()), size=fs(12),
                         color=pal.muted),
@@ -215,7 +215,7 @@ def build_profile_view(page: ft.Page, user_id: int, **params: Any) -> ft.View:
                         padding=ft.padding.symmetric(6, 12), border_radius=20, bgcolor=pal.card_alt,
                         content=ft.Text(f"{crop_emoji(p['crop_name'])} {p['crop_name']} · "
                                         + tr("profile.harvest_on", "harvest {d}", d=c.short_date(p["expected_harvest"] or "")),
-                                        size=fs(12)),
+                                        size=fs(12), color=palette().text),
                     ) for p in plantings
                 ], wrap=True, spacing=8, run_spacing=8),
             ]
@@ -243,7 +243,7 @@ def build_profile_view(page: ft.Page, user_id: int, **params: Any) -> ft.View:
                     ft.Row([c.star_rating(r["rating"], size=14),
                             ft.Text(c.short_date(r.get("created_at", "")), size=fs(11), color=pal.muted)],
                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                    ft.Text(r.get("comment") or "", size=fs(14)),
+                    ft.Text(r.get("comment") or "", size=fs(14), color=palette().text),
                     ft.TextButton(f"@{r.get('reviewer_username', '')}",
                                   on_click=lambda e, rid=r["reviewer_id"]: page.go(f"/profile/{rid}")),
                 ], spacing=4),
@@ -256,8 +256,8 @@ def build_profile_view(page: ft.Page, user_id: int, **params: Any) -> ft.View:
             content_box.update()
 
     selector = ft.SegmentedButton(
-        segments=[ft.Segment(value="listings", label=ft.Text(tr("profile.tab_listings", "Listings ({n})", n=len(listings)))),
-                  ft.Segment(value="reviews", label=ft.Text(tr("profile.tab_reviews", "Reviews ({n})", n=len(reviews))))],
+        segments=[ft.Segment(value="listings", label=ft.Text(tr("profile.tab_listings", "Listings ({n})", n=len(listings)), color=palette().text)),
+                  ft.Segment(value="reviews", label=ft.Text(tr("profile.tab_reviews", "Reviews ({n})", n=len(reviews)), color=palette().text))],
         selected={"listings"}, show_selected_icon=False, on_change=switch,
     )
     switch()

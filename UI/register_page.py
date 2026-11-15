@@ -47,7 +47,7 @@ def build_register_view(page: ft.Page, **params: object) -> ft.View:
         options=[ft.dropdown.Option(c) for c in COUNTRIES], text_size=fs(15), border_radius=12,
     )
     role = ft.SegmentedButton(
-        segments=[ft.Segment(value=v, label=ft.Text(label, size=fs(13))) for v, label in ROLE_OPTIONS],
+        segments=[ft.Segment(value=v, label=ft.Text(label, size=fs(13), color=palette().text)) for v, label in ROLE_OPTIONS],
         selected={"farmer"}, show_selected_icon=False, allow_empty_selection=False,
     )
     def toggle_show(e: ft.ControlEvent) -> None:
@@ -154,10 +154,10 @@ def build_register_view(page: ft.Page, **params: object) -> ft.View:
         border_radius=RADIUS + 6,
         border=ft.border.all(1, pal.border),
         content=ft.Column([
-            ft.Text(tr("register.title", "Join AgriLink Africa"), size=fs(22), weight=ft.FontWeight.W_700),
+            ft.Text(tr("register.title", "Join AgriLink Africa"), size=fs(22), weight=ft.FontWeight.W_700, color=palette().text),
             ft.Text(tr("register.subtitle", "Sell your harvest or source crops directly from farmers."),
                     size=fs(13), color=pal.muted),
-            ft.Text(tr("register.i_am", "I am a…"), size=fs(14), weight=ft.FontWeight.W_600),
+            ft.Text(tr("register.i_am", "I am a…"), size=fs(14), weight=ft.FontWeight.W_600, color=palette().text),
             role, role_error,
             username, full_name, email, phone,
             password, confirm, show_password,

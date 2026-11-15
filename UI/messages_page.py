@@ -50,7 +50,7 @@ def _inbox(page: ft.Page, uid: int) -> ft.View:
         unread = int(cv.get("unread_count") or 0)
         preview = ("You: " if cv.get("last_sender_id") == uid else "") + (cv.get("last_body") or "")
         title: list[ft.Control] = [ft.Text(name, size=fs(15), weight=ft.FontWeight.W_700 if unread else ft.FontWeight.W_500,
-                                           max_lines=1, overflow=ft.TextOverflow.ELLIPSIS, expand=True)]
+                                           max_lines=1, overflow=ft.TextOverflow.ELLIPSIS, expand=True, color=palette().text)]
         if cv.get("other_verified"):
             title.insert(1, c.verified_badge(15))
         rows.append(ft.Container(

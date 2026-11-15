@@ -47,7 +47,7 @@ def _seller_card(page: ft.Page, listing: dict[str, Any]) -> ft.Container:
         profile = {}
     name = listing.get("seller_full_name") or listing.get("seller_username") or "Seller"
     initials = "".join(part[0] for part in name.split()[:2]).upper()
-    title_row: list[ft.Control] = [ft.Text(name, size=fs(15), weight=ft.FontWeight.W_700)]
+    title_row: list[ft.Control] = [ft.Text(name, size=fs(15), weight=ft.FontWeight.W_700, color=palette().text)]
     if listing.get("seller_verified"):
         title_row.append(c.verified_badge(16))
     return ft.Container(
@@ -111,7 +111,7 @@ def build_listing_view(page: ft.Page, listing_id: int, **params: Any) -> ft.View
     qty_field = ft.TextField(value=f"{start_qty:g}", width=fs(110), text_align=ft.TextAlign.CENTER,
                              keyboard_type=ft.KeyboardType.NUMBER, suffix_text=unit, dense=True,
                              disabled=not active or own)
-    total = ft.Text("", size=fs(16), weight=ft.FontWeight.W_700)
+    total = ft.Text("", size=fs(16), weight=ft.FontWeight.W_700, color=palette().text)
 
     def current_qty() -> float | None:
         try:
@@ -193,10 +193,10 @@ def build_listing_view(page: ft.Page, listing_id: int, **params: Any) -> ft.View
             return
         dlg = ft.AlertDialog(
             modal=True,
-            title=ft.Text(tr("listing.confirm_title", "Confirm purchase")),
+            title=ft.Text(tr("listing.confirm_title", "Confirm purchase"), color=palette().text),
             content=ft.Text(tr("listing.confirm_body", "Buy {q}{unit} of {crop} from @{seller} for {amount}?",
                                q=f"{q:g}", unit=unit, crop=listing["crop_name"], seller=listing["seller_username"],
-                               amount=c.format_money(q * listing["price_per_unit"], currency))),
+                               amount=c.format_money(q * listing["price_per_unit"], currency)), color=palette().text),
         )
         dlg.actions = [ft.TextButton(tr("common.cancel", "Cancel"), on_click=lambda e: page.close(dlg)),
                        ft.FilledButton(tr("listing.buy", "Buy"), on_click=lambda e: do_buy(dlg, q))]
@@ -229,7 +229,7 @@ def build_listing_view(page: ft.Page, listing_id: int, **params: Any) -> ft.View
             *[ft.Container(chip, left=10, top=10) for chip in status_chip],
         ]),
         ft.Row([
-            ft.Text(listing["crop_name"], size=fs(24), weight=ft.FontWeight.W_800, expand=True),
+            ft.Text(listing["crop_name"], size=fs(24), weight=ft.FontWeight.W_800, expand=True, color=palette().text),
             ft.Text(listing.get("category") or "", size=fs(13), color=pal.muted),
         ]),
         ft.Row([
@@ -240,17 +240,17 @@ def build_listing_view(page: ft.Page, listing_id: int, **params: Any) -> ft.View
         compare,
         ft.Row([
             ft.Icon(ft.Icons.INVENTORY_2_OUTLINED, size=fs(18), color=pal.muted),
-            ft.Text(tr("listing.available", "{q} {unit} available", q=f"{available:g}", unit=unit), size=fs(14)),
+            ft.Text(tr("listing.available", "{q} {unit} available", q=f"{available:g}", unit=unit), size=fs(14), color=palette().text),
             ft.Icon(ft.Icons.LOCATION_ON_OUTLINED, size=fs(18), color=pal.muted),
-            ft.Text(listing.get("location") or "—", size=fs(14)),
+            ft.Text(listing.get("location") or "—", size=fs(14), color=palette().text),
         ], wrap=True, spacing=6),
         ft.Text(tr("listing.posted", "Posted {d}", d=c.short_date(listing.get("created_at", ""))),
                 size=fs(12), color=pal.muted),
-        ft.Text(listing.get("description") or "", size=fs(14)),
+        ft.Text(listing.get("description") or "", size=fs(14), color=palette().text),
         c.section_title(tr("listing.seller", "Seller")),
         _seller_card(page, listing),
         ft.Divider(),
-        ft.Text(tr("listing.how_much", "How much do you need?"), size=fs(15), weight=ft.FontWeight.W_600),
+        ft.Text(tr("listing.how_much", "How much do you need?"), size=fs(15), weight=ft.FontWeight.W_600, color=palette().text),
         picker,
         ft.Row([buy_btn, msg_btn], spacing=10),
         ft.Row([ft.Icon(ft.Icons.SHIELD_OUTLINED, size=fs(16), color=ACCENT),

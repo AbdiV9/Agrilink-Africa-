@@ -52,7 +52,7 @@ def _section(page: ft.Page, title: str, icon: str, controls: list[ft.Control]) -
         padding=14, border_radius=RADIUS, bgcolor=pal.card, border=ft.border.all(1, pal.border),
         content=ft.Column([
             ft.Row([ft.Icon(icon, color=PRIMARY if not theme.is_dark(page) else pal.up),
-                    ft.Text(title, size=fs(16), weight=ft.FontWeight.W_700)]),
+                    ft.Text(title, size=fs(16), weight=ft.FontWeight.W_700, color=palette().text)]),
             *controls,
         ], spacing=10),
     )
@@ -112,8 +112,8 @@ def build_settings_view(page: ft.Page, **params: Any) -> ft.View:
     dark_switch = ft.Switch(label=tr("settings.dark", "Dark mode"), value=bool(user.get("dark_mode")),
                             on_change=lambda e: save({"dark_mode": bool(e.control.value)}, rebuild=True))
     current_scale = float(user.get("text_scale") or 1.0)
-    scale_label = ft.Text(f"{current_scale:.1f}×", size=fs(13), weight=ft.FontWeight.W_600)
-    sample = ft.Text(tr("settings.sample", "Maize KES 45.20/kg"), size=16 * current_scale)
+    scale_label = ft.Text(f"{current_scale:.1f}×", size=fs(13), weight=ft.FontWeight.W_600, color=palette().text)
+    sample = ft.Text(tr("settings.sample", "Maize KES 45.20/kg"), size=16 * current_scale, color=palette().text)
 
     def scale_preview(e: ft.ControlEvent) -> None:
         value = round(float(e.control.value), 1)
@@ -164,7 +164,7 @@ def build_settings_view(page: ft.Page, **params: Any) -> ft.View:
         page.update()
 
     details = ft.ExpansionTile(
-        title=ft.Text(tr("settings.edit_details", "Edit my details"), size=fs(15)),
+        title=ft.Text(tr("settings.edit_details", "Edit my details"), size=fs(15), color=palette().text),
         subtitle=ft.Text(f"@{user['username']} · {user.get('email') or ''}", size=fs(12), color=pal.muted),
         leading=ft.Icon(ft.Icons.PERSON_OUTLINE),
         controls_padding=ft.padding.only(top=8, bottom=8),
@@ -176,10 +176,9 @@ def build_settings_view(page: ft.Page, **params: Any) -> ft.View:
     # --- help / user manual ---------------------------------------------------------
     help_tiles = [
         ft.ExpansionTile(
-            title=ft.Text(tr(qk, q), size=fs(14)),
+            title=ft.Text(tr(qk, q), size=fs(14), color=palette().text),
             controls_padding=ft.padding.only(left=12, right=12, bottom=10),
-            controls=[ft.Markdown(tr(ak, a), md_style_sheet=ft.MarkdownStyleSheet(
-                p_text_style=ft.TextStyle(size=fs(13), color=pal.text)))],
+            controls=[ft.Markdown(tr(ak, a), md_style_sheet=c.markdown_style(13))],
         )
         for qk, q, ak, a in HELP_TOPICS
     ]
@@ -198,26 +197,26 @@ def build_settings_view(page: ft.Page, **params: Any) -> ft.View:
 
     return c.app_view(page, "/settings", tr("settings.title", "Settings"), nav="/settings", unread=unread, controls=[
         _section(page, tr("settings.account", "Account"), ft.Icons.MANAGE_ACCOUNTS, [
-            ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_CIRCLE), title=ft.Text(tr("profile.mine", "My profile")),
+            ft.ListTile(leading=ft.Icon(ft.Icons.ACCOUNT_CIRCLE), title=ft.Text(tr("profile.mine", "My profile"), color=palette().text),
                         trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT), on_click=lambda e: page.go(f"/profile/{uid}")),
             ft.ListTile(leading=ft.Icon(ft.Icons.RECEIPT_LONG),
-                        title=ft.Text(tr("purchases.title", "Purchase history")),
+                        title=ft.Text(tr("purchases.title", "Purchase history"), color=palette().text),
                         trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT), on_click=lambda e: page.go("/purchases")),
-            ft.ListTile(leading=ft.Icon(ft.Icons.NEWSPAPER), title=ft.Text(tr("news.title", "Farming news")),
+            ft.ListTile(leading=ft.Icon(ft.Icons.NEWSPAPER), title=ft.Text(tr("news.title", "Farming news"), color=palette().text),
                         trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT), on_click=lambda e: page.go("/news")),
             details,
         ]),
         _section(page, tr("settings.language", "Language"), ft.Icons.TRANSLATE, [ft.Row([lang_dd]), lang_note]),
         _section(page, tr("settings.accessibility", "Display & accessibility"), ft.Icons.ACCESSIBILITY_NEW, [
             dark_switch,
-            ft.Row([ft.Text(tr("settings.text_size", "Text size"), size=fs(14)), scale_label],
+            ft.Row([ft.Text(tr("settings.text_size", "Text size"), size=fs(14), color=palette().text), scale_label],
                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            ft.Row([ft.Text("A", size=12), slider, ft.Text("A", size=22)], spacing=4),
+            ft.Row([ft.Text("A", size=12, color=palette().text), slider, ft.Text("A", size=22, color=palette().text)], spacing=4),
             sample,
         ]),
         _section(page, tr("settings.help", "Help & user manual"), ft.Icons.HELP_OUTLINE, help_tiles),
         _section(page, tr("settings.about", "About"), ft.Icons.INFO_OUTLINE, [
-            ft.Text(f"{config.APP_NAME} v{config.APP_VERSION}", size=fs(14), weight=ft.FontWeight.W_600),
+            ft.Text(f"{config.APP_NAME} v{config.APP_VERSION}", size=fs(14), weight=ft.FontWeight.W_600, color=palette().text),
             ft.Text(feature_text, size=fs(12), color=pal.muted),
         ]),
         ft.OutlinedButton(tr("settings.logout", "Log out"), icon=ft.Icons.LOGOUT, height=fs(48), on_click=confirm_logout,

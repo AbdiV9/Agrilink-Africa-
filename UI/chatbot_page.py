@@ -36,7 +36,7 @@ def _bubble(page: ft.Page, role: str, text: str) -> ft.Row:
         body = ft.Text(text, size=fs(14), color="white", selectable=True)
     else:
         body = ft.Markdown(text, selectable=True, extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
-                           md_style_sheet=ft.MarkdownStyleSheet(p_text_style=ft.TextStyle(size=fs(14), color=pal.text)))
+                           md_style_sheet=c.markdown_style(14))
     bubble = ft.Container(
         content=body,
         padding=ft.padding.symmetric(horizontal=12, vertical=9),

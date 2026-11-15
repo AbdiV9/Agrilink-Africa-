@@ -27,8 +27,8 @@ def _alert_dialog(page: ft.Page, uid: int, crop: dict[str, Any], current: float 
         value=f"{current:.2f}" if current else "", keyboard_type=ft.KeyboardType.NUMBER, autofocus=True,
     )
     direction = ft.SegmentedButton(
-        segments=[ft.Segment(value="above", label=ft.Text(tr("crop.above", "Goes above"))),
-                  ft.Segment(value="below", label=ft.Text(tr("crop.below", "Drops below")))],
+        segments=[ft.Segment(value="above", label=ft.Text(tr("crop.above", "Goes above"), color=palette().text)),
+                  ft.Segment(value="below", label=ft.Text(tr("crop.below", "Drops below"), color=palette().text))],
         selected={"above"}, show_selected_icon=False,
     )
     dlg = ft.AlertDialog(modal=True)
@@ -50,7 +50,7 @@ def _alert_dialog(page: ft.Page, uid: int, crop: dict[str, Any], current: float 
         c.show_snack(page, tr("crop.alert_set", "Alert set: we'll tell you when {crop} {dir} {price}",
                               crop=crop["name"], dir=next(iter(direction.selected)), price=c.format_money(value)))
 
-    dlg.title = ft.Text(tr("crop.alert_title", "Price alert for {crop}", crop=crop["name"]))
+    dlg.title = ft.Text(tr("crop.alert_title", "Price alert for {crop}", crop=crop["name"]), color=palette().text)
     dlg.content = ft.Column([
         ft.Text(tr("crop.now", "Now: {price}", price=c.format_money(current)), color=palette(page).muted),
         direction, target,
@@ -162,8 +162,8 @@ def build_crop_detail_view(page: ft.Page, crop_id: int, **params: Any) -> ft.Vie
         padding=14, border_radius=RADIUS, bgcolor=pal.card, border=ft.border.all(1, pal.border),
         content=ft.Column([
             ft.Row([ft.Icon(ft.Icons.LIGHTBULB_OUTLINE, color=ACCENT),
-                    ft.Text(tr("crop.season_advice", "Season advice"), size=fs(16), weight=ft.FontWeight.W_700)]),
-            ft.Text(advice, size=fs(14)),
+                    ft.Text(tr("crop.season_advice", "Season advice"), size=fs(16), weight=ft.FontWeight.W_700, color=palette().text)]),
+            ft.Text(advice, size=fs(14), color=palette().text),
             facts,
         ], spacing=10),
     )
@@ -211,7 +211,7 @@ def _fact(page: ft.Page, icon: str, label: str, value: str) -> ft.Container:
         expand=True, padding=10, border_radius=12, bgcolor=pal.card_alt,
         content=ft.Column([ft.Icon(icon, size=fs(18), color=PRIMARY),
                            ft.Text(label, size=fs(11), color=pal.muted),
-                           ft.Text(value, size=fs(14), weight=ft.FontWeight.W_600)],
+                           ft.Text(value, size=fs(14), weight=ft.FontWeight.W_600, color=palette().text)],
                           spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
     )
 

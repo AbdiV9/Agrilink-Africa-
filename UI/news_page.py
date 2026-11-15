@@ -45,7 +45,7 @@ def news_tile(page: ft.Page, item: dict[str, Any], compact: bool = False) -> ft.
     meta = " · ".join(x for x in (item.get("source"), time_ago(item.get("published", ""))) if x)
     body: list[ft.Control] = [
         ft.Text(item["title"], size=fs(15), weight=ft.FontWeight.W_600, max_lines=3,
-                overflow=ft.TextOverflow.ELLIPSIS),
+                overflow=ft.TextOverflow.ELLIPSIS, color=palette().text),
     ]
     if item.get("summary") and not compact and item["summary"] != item["title"]:
         body.append(ft.Text(item["summary"], size=fs(13), color=pal.muted, max_lines=3,
@@ -72,7 +72,7 @@ def build_news_view(page: ft.Page, **params: Any) -> ft.View:
 
     def render_chips() -> None:
         chips.controls = [
-            ft.Chip(label=ft.Text(tr("news.all", "All") if crop is None else crop, size=fs(13)),
+            ft.Chip(label=ft.Text(tr("news.all", "All") if crop is None else crop, size=fs(13), color=palette().text),
                     selected=selected["crop"] == crop, selected_color=pal.chip_up_bg,
                     on_select=lambda e, crop=crop: choose(crop))
             for crop in [None, *FILTER_CROPS]

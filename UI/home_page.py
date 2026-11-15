@@ -50,15 +50,15 @@ def _watch_row(page: ft.Page, crop: dict[str, Any]) -> ft.Container:
         ink=True,
         on_click=lambda e: page.go(f"/crop/{crop['id']}"),
         content=ft.Row([
-            ft.Container(ft.Text(crop_emoji(crop["name"]), size=fs(22)), width=40, height=40,
+            ft.Container(ft.Text(crop_emoji(crop["name"]), size=fs(22), color=palette().text), width=40, height=40,
                          bgcolor=pal.card_alt, border_radius=20, alignment=ft.alignment.center),
             ft.Column([
-                ft.Text(crop["name"], size=fs(15), weight=ft.FontWeight.W_600),
+                ft.Text(crop["name"], size=fs(15), weight=ft.FontWeight.W_600, color=palette().text),
                 ft.Text(f"per {crop.get('unit', 'kg')}", size=fs(12), color=pal.muted),
             ], spacing=0, expand=True),
             c.sparkline([h["price"] for h in history], width=80, height=34),
             ft.Column([
-                ft.Text(c.format_money(crop.get("price")), size=fs(14), weight=ft.FontWeight.W_600),
+                ft.Text(c.format_money(crop.get("price")), size=fs(14), weight=ft.FontWeight.W_600, color=palette().text),
                 c.change_chip(crop.get("change_pct"), page, size=11),
             ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.END),
         ], spacing=12),
